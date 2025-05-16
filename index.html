@@ -38,3 +38,23 @@
       let nome = document.getElementById("nome").value;
       let puntata = parseFloat(document.getElementById("puntata").value);
       let scelta = document.getElementById("scelta").value;
+
+      if (nome && !isNaN(puntata) && scelta) {
+        partecipanti.push({ nome, puntata, scelta });
+        aggiornaTabella();
+        document.getElementById("nome").value = "";
+        document.getElementById("puntata").value = "";
+        document.getElementById("scelta").value = "";
+      }
+    }
+
+    function rimuoviPartecipante(index) {
+      partecipanti.splice(index, 1);
+      aggiornaTabella();
+    }
+
+    function aggiornaTabella() {
+      let tabella = document.getElementById("tabella");
+      tabella.innerHTML = "<tr><th>Nome</th><th>Puntata</th><th>Scelta</th><th>Azioni</th></tr>";
+      partecipanti.forEach((p, i) => {
+        tabella.innerHTML += `<tr>
