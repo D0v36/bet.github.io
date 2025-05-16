@@ -1,35 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Scommesse tra Amici</title>
   <style>
-    body { font-family: Arial; margin: 20px; }
-    input, button { margin: 5px; padding: 5px; }
-    table { border-collapse: collapse; margin-top: 15px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h3 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #ecf0f1;
+    }
+    .actions button {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .actions button:hover {
+      background-color: #c0392b;
+    }
+    .result p {
+      font-size: 16px;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
-  <h1>Gestione Scommesse</h1>
+  <div class="container">
+    <h1>Gestione Scommesse</h1>
 
-  <h3>Aggiungi Partecipante</h3>
-  <input id="nome" placeholder="Nome">
-  <input id="puntata" type="number" placeholder="Importo scommesso">
-  <input id="scelta" placeholder="Pronostico">
-  <button onclick="aggiungiPartecipante()">Aggiungi</button>
+    <h3>Aggiungi Partecipante</h3>
+    <div>
+      <input id="nome" placeholder="Nome">
+      <input id="puntata" type="number" placeholder="Importo scommesso">
+      <input id="scelta" placeholder="Pronostico">
+      <input id="classe" placeholder="Classe">
+      <button onclick="aggiungiPartecipante()">Aggiungi Partecipante</button>
+    </div>
 
-  <h3>Partecipanti</h3>
-  <table id="tabella">
-    <tr><th>Nome</th><th>Puntata</th><th>Scelta</th><th>Azioni</th></tr>
-  </table>
+    <h3>Partecipanti</h3>
+    <table id="tabella">
+      <tr><th>Nome</th><th>Puntata (€)</th><th>Scelta</th><th>Classe</th><th>Azioni</th></tr>
+    </table>
 
-  <h3>Inserisci Risultato</h3>
-  <input id="risultato" placeholder="Risultato vincente">
-  <button onclick="calcolaVincite()">Calcola Vincite</button>
+    <h3>Inserisci Risultato</h3>
+    <div>
+      <input id="risultato" placeholder="Risultato vincente">
+      <button onclick="calcolaVincite()">Calcola Vincite</button>
+    </div>
 
-  <h3>Risultati</h3>
-  <div id="output"></div>
+    <h3>Risultati</h3>
+    <div id="output" class="result"></div>
+  </div>
 
   <script>
     let partecipanti = [];
@@ -38,13 +111,15 @@
       let nome = document.getElementById("nome").value;
       let puntata = parseFloat(document.getElementById("puntata").value);
       let scelta = document.getElementById("scelta").value;
+      let classe = document.getElementById("classe").value;
 
-      if (nome && !isNaN(puntata) && scelta) {
-        partecipanti.push({ nome, puntata, scelta });
+      if (nome && !isNaN(puntata) && scelta && classe) {
+        partecipanti.push({ nome, puntata, scelta, classe });
         aggiornaTabella();
         document.getElementById("nome").value = "";
         document.getElementById("puntata").value = "";
         document.getElementById("scelta").value = "";
+        document.getElementById("classe").value = "";
       }
     }
 
@@ -55,13 +130,14 @@
 
     function aggiornaTabella() {
       let tabella = document.getElementById("tabella");
-      tabella.innerHTML = "<tr><th>Nome</th><th>Puntata</th><th>Scelta</th><th>Azioni</th></tr>";
+      tabella.innerHTML = "<tr><th>Nome</th><th>Puntata (€)</th><th>Scelta</th><th>Classe</th><th>Azioni</th></tr>";
       partecipanti.forEach((p, i) => {
         tabella.innerHTML += `<tr>
           <td>${p.nome}</td>
           <td>${p.puntata} €</td>
           <td>${p.scelta}</td>
-          <td><button onclick="rimuoviPartecipante(${i})">Rimuovi</button></td>
+          <td>${p.classe}</td>
+          <td class="actions"><button onclick="rimuoviPartecipante(${i})">Rimuovi</button></td>
         </tr>`;
       });
     }
@@ -69,8 +145,7 @@
     function arrotonda(valore) {
       let intero = Math.floor(valore);
       let decimale = valore - intero;
-      if (decimale >= 0.80) return Math.ceil(valore);
-      else return Math.floor(valore);
+      return decimale >= 0.80 ? Math.ceil(valore) : Math.floor(valore);
     }
 
     function calcolaVincite() {
@@ -93,7 +168,7 @@
         let quota = p.puntata / sommaVincitori;
         let vincita = quota * montepremiNetto;
         let vincitaArrotondata = arrotonda(vincita);
-        output.innerHTML += `<p>${p.nome} ha vinto ${vincitaArrotondata} €</p>`;
+        output.innerHTML += `<p>${p.nome} (${p.classe}) ha vinto ${vincitaArrotondata} €</p>`;
       });
     }
   </script>
