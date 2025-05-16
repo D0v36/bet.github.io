@@ -58,3 +58,44 @@
       tabella.innerHTML = "<tr><th>Nome</th><th>Puntata</th><th>Scelta</th><th>Azioni</th></tr>";
       partecipanti.forEach((p, i) => {
         tabella.innerHTML += `<tr>
+          <td>${p.nome}</td>
+          <td>${p.puntata} €</td>
+          <td>${p.scelta}</td>
+          <td><button onclick="rimuoviPartecipante(${i})">Rimuovi</button></td>
+        </tr>`;
+      });
+    }
+
+    function arrotonda(valore) {
+      let intero = Math.floor(valore);
+      let decimale = valore - intero;
+      if (decimale >= 0.80) return Math.ceil(valore);
+      else return Math.floor(valore);
+    }
+
+    function calcolaVincite() {
+      let risultato = document.getElementById("risultato").value;
+      let vincitori = partecipanti.filter(p => p.scelta === risultato);
+      let totale = partecipanti.reduce((acc, p) => acc + p.puntata, 0);
+      let commissione = totale * 0.20; // 20%
+      let montepremiNetto = totale - commissione;
+      let sommaVincitori = vincitori.reduce((acc, p) => acc + p.puntata, 0);
+
+      let output = document.getElementById("output");
+      output.innerHTML = `<p>Totale scommesse: ${totale.toFixed(2)} €<br>Montepremi distribuito: ${montepremiNetto.toFixed(2)} €</p>`;
+
+      if (vincitori.length === 0) {
+        output.innerHTML += "<p><strong>Nessun vincitore.</strong></p>";
+        return;
+      }
+
+      vincitori.forEach(p => {
+        let quota = p.puntata / sommaVincitori;
+        let vincita = quota * montepremiNetto;
+        let vincitaArrotondata = arrotonda(vincita);
+        output.innerHTML += `<p>${p.nome} ha vinto ${vincitaArrotondata} €</p>`;
+      });
+    }
+  </script>
+</body>
+</html>
