@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Scommesse tra Amici</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    input, button { margin: 5px; padding: 5px; }
+    table { border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>Gestione Scommesse</h1>
+
+  <h3>Aggiungi Partecipante</h3>
+  <input id="nome" placeholder="Nome">
+  <input id="puntata" type="number" placeholder="Importo scommesso">
+  <input id="scelta" placeholder="Pronostico">
+  <button onclick="aggiungiPartecipante()">Aggiungi</button>
+
+  <h3>Partecipanti</h3>
+  <table id="tabella">
+    <tr><th>Nome</th><th>Puntata</th><th>Scelta</th><th>Azioni</th></tr>
+  </table>
+
+  <h3>Inserisci Risultato</h3>
+  <input id="risultato" placeholder="Risultato vincente">
+  <button onclick="calcolaVincite()">Calcola Vincite</button>
+
+  <h3>Risultati</h3>
+  <div id="output"></div>
+
+  <script>
+    let partecipanti = [];
+
+    function aggiungiPartecipante() {
+      let nome = document.getElementById("nome").value;
+      let puntata = parseFloat(document.getElementById("puntata").value);
+      let scelta = document.getElementById("scelta").value;
